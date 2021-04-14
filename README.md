@@ -198,7 +198,7 @@ If everything went correctly, we have deployed our two servers correctly. We can
 
 `app.vm.provision "shell", inline: 'sudo echo "export DB_HOST=mongodb://localhost:27017/posts" >> /home/vagrant/.bashrc'`
 
-- We proceed to restart our machines and in this way we proceed to connect to the app, access the `app` folder, and execute`sudo node seeds / seed.js` to obtain the information from the database and then launch the app `sudo node app.js`. It should show the message of the port where it is listening.
+- We proceed to restart our machines and in this way we proceed to connect to the app, access the `cd app` folder, and execute `npm install` to resolve dependencies, `node seeds/seed.js` to obtain the information from the database and then launch the app `node app.js`. It should show the message of the port where it is listening.
 
 - We proceed to access our browser and enter the following link: `http://development.local:3000/posts`
 
