@@ -18,3 +18,6 @@ sudo apt-get install nodejs -y
 
 # install npm with pm2 -g
 sudo npm install pm2 -g
+
+# npm install
+sudo npm install /home/vagrant/app
