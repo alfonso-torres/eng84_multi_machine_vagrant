@@ -14,7 +14,7 @@ Vagrant.configure("2") do |config|
     #app.hostsupdater.aliases = ["development.local"]
     app.vm.synced_folder "app", "/home/vagrant/app"
     app.vm.provision "shell", path: "environment/app/provision.sh", privileged: false
-    app.vm.provision "shell", inline: "sudo echo "export DB_HOST=mongodb://192.168.10.101:27017/posts" >> /home/vagrant/.bashrc"
+    app.vm.provision "shell", inline: 'sudo echo "export DB_HOST=mongodb://localhost:27017/posts" >> /home/vagrant/.bashrc'
     #app.vm.provision "shell", inline: "echo \"export DB_HOST=mongodb://127.0.0.1:27017/posts\" >> /etc/profile.d/myvars.sh", run: "always"
     #app.vm.provision "shell", inline: 'set_env({ DB_HOST: "mongodb://localhost:27017/posts" })', privileged: false
   end
