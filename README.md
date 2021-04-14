@@ -196,7 +196,7 @@ If everything went correctly, we have deployed our two servers correctly. We can
 
 - We proceed to create our environment variable to connect the application with the database, in the `Vagrantfile` file in the code part corresponding to the application:
 
-`app.vm.provision "shell", inline: "sudo echo "export DB_HOST=mongodb://localhost:27017/posts" >> /home/vagrant/.bashrc"`
+`app.vm.provision "shell", inline: 'sudo echo "export DB_HOST=mongodb://localhost:27017/posts" >> /home/vagrant/.bashrc'`
 
 - We proceed to restart our machines and in this way we proceed to connect to the app, access the `app` folder, and execute`sudo node seeds / seed.js` to obtain the information from the database and then launch the app `sudo node app.js`. It should show the message of the port where it is listening.
 
