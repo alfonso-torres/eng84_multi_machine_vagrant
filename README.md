@@ -6,6 +6,8 @@ The sample application has the ability to connect to a database. We need to prov
 
 Vagrant is capable of running two or more virtual machines at once with different configurations.
 
+![SCHEME](./vagrant.png)
+
 ## Tasks
 
 - Research how to create a multi machine vagrant environment.
@@ -188,18 +190,70 @@ If everything went correctly, we have deployed our two servers correctly. We can
 
 ## Create Environment Variables
 
+An enviroment variable is a dynamic-named value that can affect the way running processes will behave on a computer.
+
 - `printenv`: prints all variables
 - `printenv VARNAME`: print the value of a specific variable
 - `VARNAME="var_value"`: to create a variable
 - `export VARNAME="var_value":` to create environment variables
-- `echo "export VARNMAE='var_value'" >> ~/.bashrc`: to create a persistent variable
+- `echo "export VARNMAE='var_value'" >> ~/.bashrc`: how to create a persistent variable. If you want to persist the PATH variable, you have to edit the .bashrc file.
 
 - We proceed to create our environment variable to connect the application with the database, in the `Vagrantfile` file in the code part corresponding to the application:
 
-`app.vm.provision "shell", inline: 'sudo echo "export DB_HOST=mongodb://localhost:27017/posts" >> /home/vagrant/.bashrc'`
+`app.vm.provision "shell", inline: 'sudo echo "export DB_HOST=mongodb://192.168.10.101:27017/posts" >> /home/vagrant/.bashrc'`
 
 - We proceed to restart our machines and in this way we proceed to connect to the app, access the `cd app` folder, and execute `npm install` to resolve dependencies, `node seeds/seed.js` to obtain the information from the database and then launch the app `node app.js`. It should show the message of the port where it is listening.
 
-- We proceed to access our browser and enter the following link: `http://development.local:3000/posts`
+- We proceed to access our browser and enter the following link: `http://development.local:3000/posts`. It will show you all the posts from the database.
+
+## Reverse Proxy with NGINX
+
+Nginx is an open-source web server that, since its initial success as a web server, is now also used as reverse proxy, HTTP cache, and load balancer.
+
+Some common features seen in Nginx include:
+- Reverse proxy with caching
+- IPv6
+- LOad balancing
+- WebSockets
+
+A reverse proxy sits in front of a web server and receives all the requests before they reach the origin server. Reverse proxies are typically used to enhance performance, security, and reliability of the web server.
+
+When you browse the web normally by entering a domain name or clicking a link, your browser/device connects to the website’s server directly and starts downloading its resources.
+
+A reverse proxy server acts as a front for the origin server to maintain anonymity and enhance security, just like how a user/client can use a forward proxy to achieve the same. It ensures that no user or client communicates directly with the origin server.
+
+- In this case, what we want is that the user does not have to write the port in order to access our service. Nobody in the normal routine writes the port. Wherewith we proceed to create the code to make the user instead of entering `development.local:3000` to see the application have to enter only `development.local`. For them we will use the reverse proxing with NGINX functionality.
+
+- What is the default location of our NGINX file that loads the NGINX page: `cd /etc/nginx/sites-available/`
+
+- `nano /etc/nginx/sites-available/default` : we have here the configuration of the reverse proxing.
+
+- We need to use the default file in the same location to add our code to use it as our reverse proxy.
+
+- We proceed to automate this modification, wherewith we add the following code in the `provision.sh` file of the app:
+
+````bash
+# NGINX reverse proxy automation
+sudo echo "server {
+    listen 80;
+
+    server_name _;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}" | sudo tee /etc/nginx/sites-available/default
+
+sudo systemctl restart nginx
+````
+
+- We proceed to restart our machines and in this way we proceed to connect to the app, access the `cd app` folder, and execute `npm install` to resolve dependencies, `node seeds/seed.js` to obtain the information from the database and then launch the app `node app.js`. It should show the message of the port where it is listening.
+
+- We proceed to access our browser and enter the following link: `http://development.local/posts`, without the port.
 
 Finally it will show you the information and it means that we have configured our environment with two machines and connecting with each other through an environment variable.
